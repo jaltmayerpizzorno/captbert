@@ -137,17 +137,30 @@ Versions info available in `env.yml`
 
 ```
 conda create --name okvqa python=3.8
-conda install faiss-gpu cudatoolkit=10.1 -c pytorch
-conda install pytorch torchvision torchaudio cudatoolkit=10.1 -c pytorch
+conda activate okvqa
+conda install faiss-gpu cudatoolkit=10.2 -c pytorch
+conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch-lts
+
+module load cuda/10.2.89
+module load gcc/8.5.0
 
 git clone https://github.com/NVIDIA/apex
 cd apex
-export TORCH_CUDA_ARCH_LIST="5.2;6.1;7.5" (optional)
-pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
+# After ce9df7d a change was made that is incompatible with Python 3.8
+git checkout ce9df7d
+# If the GPUs aren't visible where you're compiling, you'll need to set their architectures
+# by setting TORCH_CUDA_ARCH_LIST. See e.g. https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
+# to find out what architecture your GPUs have.  Or use something like "nvidia-smi -q -x | grep product_"
+export TORCH_CUDA_ARCH_LIST="7.0 7.5"
+# The compilation uses so much CPU that it may be killed (because of system policies);
+# run it in the cluster's CPU partition instead.
+srun --pty -p cpu -c 10 pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
+cd ..
 
 git clone https://github.com/huggingface/transformers.git
 cd transformers
 pip install -e .
+cd ..
 
 conda install -c conda-forge tensorboard
 pip install datasets
