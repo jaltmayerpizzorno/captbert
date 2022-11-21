@@ -7,29 +7,36 @@ I am extending the work in [a paper by Qu, Zamani, Yang, Croft and Learned-Mille
 to perform dense passage retrieval for OK-VQA based on the question and on an automatically generated caption.
 
 ## Environment setup
-Qu et al.'s code is based on Python 3.8, so for maximum compatibility I thought I'd use that as well.
-Since the current Python is now 3.11 and various packages have moved on, this brings some problems, too.
-```
-conda create --name okvqa python=3.8
-conda activate okvqa
-conda install faiss-gpu cudatoolkit=10.2 -c pytorch
-conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch-lts
+Qu et al.'s code is based on Python 3.8, so to minimize issues I thought I'd use that as well.
+However, current Python is now 3.11 and various packages have moved on, so it's not all a walk in the park.
 
+These steps are for setting it up on the Unity cluster.
+```
 module load cuda/10.2.89
 module load gcc/8.5.0
 
+conda create --name okvqa2 python=3.8
+conda activate okvqa2
+conda install faiss-gpu cudatoolkit=10.2 -c pytorch
+conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch-lts
+
+# --- apex (distributed machine learning package)
 git clone https://github.com/NVIDIA/apex
 cd apex
+
 # After ce9df7d a change was made that is incompatible with Python 3.8
 git checkout ce9df7d
+
 # If the GPUs aren't visible where you're compiling, you'll need to set their architectures
 # by setting TORCH_CUDA_ARCH_LIST. See e.g. https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
 # to find out what architecture your GPUs have.  Or use something like "nvidia-smi -q -x | grep product_"
 export TORCH_CUDA_ARCH_LIST="7.0 7.5"
+
 # The compilation uses so much CPU that it may be killed (because of system policies);
 # run it in the cluster's CPU partition instead.
 srun --pty -p cpu -c 10 pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
 cd ..
+# -- apex
 
 git clone https://github.com/huggingface/transformers.git
 cd transformers
@@ -42,9 +49,8 @@ pip install pytrec_eval
 conda install scikit-image
 ```
 
-## Original notes from Qu et al.'s OK-VQA
-
 ---
+## The items below are still original notes from Qu et al.'s OK-VQA
 
 ### Training, and evaluating on the validation set with the small validation collection
 ```
