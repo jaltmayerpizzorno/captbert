@@ -1,19 +1,50 @@
-# Passage Retrieval for Outside-Knowledge Visual Question Answering
+# Passage Retrieval With Automatically Generated Captions for Outside-Knowledge Visual Question Answering
 
-This repository contains code and data for our paper [Passage Retrieval for Outside-Knowledge Visual Question Answering]()
+(work-in-progress)
 
-## Data and checkpoints
+As my final project for [COMPSCI 646: Information Retrieval](https://groups.cs.umass.edu/zamani/compsci-646-information-retrieval-fall-2022/)
+I am extending the work in [a paper by Qu, Zamani, Yang, Croft and Learned-Miller](https://github.com/prdwb/okvqa-release) by fine-tuning BERT
+to perform dense passage retrieval for OK-VQA based on the question and on an automatically generated caption.
 
-Our data is based on the [OK-VQA](https://okvqa.allenai.org/index.html) dataset.
-* First download all [OK-VQA](https://okvqa.allenai.org/index.html) files
-* Then download the [collecton](https://ciir.cs.umass.edu/downloads/ORConvQA/all_blocks.txt.gz) file (all_blocks.txt)
-* Finally, download other files [here](https://ciir.cs.umass.edu/downloads/okvqa/). 
-    * passage_id_to_line_id.json: map passages ids to line ids in all_blocks.txt
-    * data: train/val/test split and a small validation collection
-    * okvqa.datasets: pre-extracted image features with [this script](https://github.com/huggingface/transformers/blob/master/examples/research_projects/lxmert/extracting_data.py)
-    * (Optional) checkpoint: our model checkpoint. No need to download if you want to train your own model
+## Environment setup
+Qu et al.'s code is based on Python 3.8, so for maximum compatibility I thought I'd use that as well.
+Since the current Python is now 3.11 and various packages have moved on, this brings some problems, too.
+```
+conda create --name okvqa python=3.8
+conda activate okvqa
+conda install faiss-gpu cudatoolkit=10.2 -c pytorch
+conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch-lts
 
-## Sample commands
+module load cuda/10.2.89
+module load gcc/8.5.0
+
+git clone https://github.com/NVIDIA/apex
+cd apex
+# After ce9df7d a change was made that is incompatible with Python 3.8
+git checkout ce9df7d
+# If the GPUs aren't visible where you're compiling, you'll need to set their architectures
+# by setting TORCH_CUDA_ARCH_LIST. See e.g. https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
+# to find out what architecture your GPUs have.  Or use something like "nvidia-smi -q -x | grep product_"
+export TORCH_CUDA_ARCH_LIST="7.0 7.5"
+# The compilation uses so much CPU that it may be killed (because of system policies);
+# run it in the cluster's CPU partition instead.
+srun --pty -p cpu -c 10 pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
+cd ..
+
+git clone https://github.com/huggingface/transformers.git
+cd transformers
+pip install -e .
+cd ..
+
+conda install -c conda-forge tensorboard
+pip install datasets
+pip install pytrec_eval
+conda install scikit-image
+```
+
+## Original notes from Qu et al.'s OK-VQA
+
+---
 
 ### Training, and evaluating on the validation set with the small validation collection
 ```
@@ -132,41 +163,6 @@ python -u train_retriever.py \
 ```
 
 
-## Environment
-Versions info available in `env.yml`
-
-```
-conda create --name okvqa python=3.8
-conda activate okvqa
-conda install faiss-gpu cudatoolkit=10.2 -c pytorch
-conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch-lts
-
-module load cuda/10.2.89
-module load gcc/8.5.0
-
-git clone https://github.com/NVIDIA/apex
-cd apex
-# After ce9df7d a change was made that is incompatible with Python 3.8
-git checkout ce9df7d
-# If the GPUs aren't visible where you're compiling, you'll need to set their architectures
-# by setting TORCH_CUDA_ARCH_LIST. See e.g. https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
-# to find out what architecture your GPUs have.  Or use something like "nvidia-smi -q -x | grep product_"
-export TORCH_CUDA_ARCH_LIST="7.0 7.5"
-# The compilation uses so much CPU that it may be killed (because of system policies);
-# run it in the cluster's CPU partition instead.
-srun --pty -p cpu -c 10 pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
-cd ..
-
-git clone https://github.com/huggingface/transformers.git
-cd transformers
-pip install -e .
-cd ..
-
-conda install -c conda-forge tensorboard
-pip install datasets
-pip install pytrec_eval
-conda install scikit-image
-```
 
 To generate image features, we need `opencv`, which doesn't work with python 3.8 at the moment. So image features are generated with an environment with python 3.7 (no need to do this if you have downloaded the features we extracted linked above). Use command `conda install -c conda-forge opencv` to install `opencv`.
 
@@ -176,11 +172,3 @@ To generate image features, we need `opencv`, which doesn't work with python 3.8
 * `coco_tools.py` is built on [cocoapi](https://github.com/cocodataset/cocoapi). We thank the cocoapi authors for releasing their code.  
 
 See copyright information in LICENSE.
-
-## Citation
-@inproceedings{prokvqa,
-  title={{Passage Retrieval for Outside-Knowledge Visual Question Answering}},
-  author={Chen Qu and and Hamed Zamani and Liu Yang and W. Bruce Croft and Erik Learned-Miller},
-  booktitle={SIGIR},
-  year={2021}
-}
