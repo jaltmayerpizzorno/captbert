@@ -3,8 +3,9 @@
 
 # In[1]:
 
-
 from __future__ import absolute_import, division, print_function
+
+BASE_DIR = '/home/jpizzorno_umass_edu/work/cs646-project'
 
 # import os
 # os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
@@ -42,9 +43,10 @@ from retriever_utils import RetrieverDataset, GenPassageRepDataset
 from retriever_utils import save_model, load_model, rank_fusion, DynamicEval
 from modeling import Pipeline, BertForRetriever, LxmertForRetriever
 
-
 # In[2]:
 
+import transformers.utils.logging
+transformers.utils.logging.set_verbosity(transformers.utils.logging.ERROR)
 
 logger = logging.getLogger(__name__)
 
@@ -535,10 +537,10 @@ def gen_query_rep(args, model, tokenizer, prefix=''):
 parser = argparse.ArgumentParser()
 
 # Required parameters
-parser.add_argument("--input_file", default='/mnt/scratch/chenqu/okvqa/data_v2/{}_pairs_cap_combine_sum.txt',
+parser.add_argument("--input_file", default=BASE_DIR+'/okvqa/data/data/{}_pairs_cap_combine_sum.txt',
                     type=str, required=False,
                     help="okvqa files.")
-parser.add_argument("--image_features_path", default='/mnt/scratch/chenqu/okvqa/okvqa_image_features/okvqa.datasets',
+parser.add_argument("--image_features_path", default=BASE_DIR+'/okvqa/data/okvqa.datasets',
                     type=str, required=False,
                     help="Path to image features.")
 parser.add_argument("--train_data_sub_type", default='train2014',
@@ -551,16 +553,16 @@ parser.add_argument("--test_data_sub_type", default='',
                    type=str, required=False,
                    help="Test data sub type.")
 
-parser.add_argument("--ann_file", default='/mnt/scratch/chenqu/okvqa/mscoco_val2014_annotations.json',
+parser.add_argument("--ann_file", default=BASE_DIR+'/okvqa/data/mscoco_val2014_annotations.json',
                     type=str, required=False,
                     help="Path to val okvqa annotations. For dynamic evaluation.")
-parser.add_argument("--ques_file", default='/mnt/scratch/chenqu/okvqa/OpenEnded_mscoco_val2014_questions.json',
+parser.add_argument("--ques_file", default=BASE_DIR+'/okvqa/data/OpenEnded_mscoco_val2014_questions.json',
                     type=str, required=False,
                     help="Path to val okvqa questions. For dynamic evaluation.")
-parser.add_argument("--passage_id_to_line_id_file", default='/mnt/scratch/chenqu/okvqa/passage_id_to_line_id.json',
+parser.add_argument("--passage_id_to_line_id_file", default=BASE_DIR+'/okvqa/data/passage_id_to_line_id.json',
                     type=str, required=False,
                     help="Path to passage_id_to_line_id_file. For dynamic evaluation.")
-parser.add_argument("--all_blocks_file", default='/mnt/scratch/chenqu/okvqa/all_blocks.txt',
+parser.add_argument("--all_blocks_file", default=BASE_DIR+'/okvqa/data/all_blocks.txt',
                     type=str, required=False,
                     help="Path to all blocks file. For dynamic evaluation.")
 
@@ -569,13 +571,13 @@ parser.add_argument("--query_model_name_or_path", default='unc-nlp/lxmert-base-u
                     help="unc-nlp/lxmert-base-uncased or bert-base-uncased")
 parser.add_argument("--passage_model_name_or_path", default='bert-base-uncased', type=str, required=False,
                     help="Path to pre-trained model or shortcut name")
-parser.add_argument("--output_dir", default='/mnt/scratch/chenqu/okvqa_output/test_10', type=str, required=False,
+parser.add_argument("--output_dir", default=BASE_DIR+'/okvqa_output', type=str, required=False,
                     help="The output directory where the model checkpoints and predictions will be written.")
-# parser.add_argument("--qrels", default='/mnt/scratch/chenqu/okvqa/bm25/val2014_qrels.txt', type=str, required=False,
+# parser.add_argument("--qrels", default=BASE_DIR+'/okvqa/bm25/val2014_qrels.txt', type=str, required=False,
 #                     help="qrels to evaluate open retrieval")    
 
-parser.add_argument("--query_encoder_type", default='lxmert', type=str, required=False,
-                    help="whether to use bert or lxmert as the query encoder") 
+parser.add_argument("--query_encoder_type", choices=['lxmert', 'bert', 'capt-bert'], type=str, required=False,
+                    help="type of query encoder to use") 
 parser.add_argument("--lxmert_rep_type", 
                     # default='{"pooled_output": "none", "vision_output": "none", "fusion": "combine_sum"}', 
                     # default='{"pooled_output": "none", "language_output": "max", "vision_output": "mean"}', 
@@ -598,19 +600,19 @@ parser.add_argument("--retrieve_top_k", default=5, type=int,
 parser.add_argument("--gen_passage_rep", default=False, type=str2bool,
                     help="generate passage representations for all passages.")
 parser.add_argument("--retrieve_checkpoint",
-                    # default='/mnt/scratch/chenqu/okvqa_output/test_10/checkpoint-10', type=str,
+                    # default=BASE_DIR+'/okvqa_output/test_10/checkpoint-10', type=str,
                     default='', type=str,
                     help="generate query/passage representations with this checkpoint")
 parser.add_argument("--gen_passage_rep_input",
-                    default='/mnt/scratch/chenqu/okvqa/data_v2/val2014_blocks_cap_combine_sum.txt', type=str,
+                    default=BASE_DIR+'/okvqa/data/data/val2014_blocks_cap_combine_sum.txt', type=str,
                     help="generate passage representations for this file that contains passages")
 parser.add_argument("--gen_passage_rep_output",
-                    # default='/mnt/scratch/chenqu/okvqa_output/test_10/checkpoint-10/reps.json', type=str,
+                    # default=BASE_DIR+'/okvqa_output/test_10/checkpoint-10/reps.json', type=str,
                     default='', type=str,
                     help="Val passage representations")
 parser.add_argument("--collection_reps_path",
                     default='', type=str,
-                    # default='/mnt/scratch/chenqu/okvqa_output/test_10/checkpoint-10/reps.json', type=str,
+                    # default=BASE_DIR+'/okvqa_output/test_10/checkpoint-10/reps.json', type=str,
                     help="All passage representations")
 
 # Other parameters
@@ -618,7 +620,7 @@ parser.add_argument("--collection_reps_path",
 #                     help="Pretrained config name or path if not the same as model_name")
 # parser.add_argument("--tokenizer_name", default="", type=str,
 #                     help="Pretrained tokenizer name or path if not the same as model_name")
-parser.add_argument("--cache_dir", default="/mnt/scratch/chenqu/okvqa_huggingface_cache", type=str,
+parser.add_argument("--cache_dir", default=BASE_DIR+"/okvqa_huggingface_cache", type=str,
                     help="Where do you want to store the pre-trained models downloaded from s3")
 
 parser.add_argument("--question_max_seq_length", default=20, type=int,
@@ -700,6 +702,9 @@ parser.add_argument("--load_small", default=True, type=str2bool, required=False,
 parser.add_argument("--num_workers", default=1, type=int, required=False,
                     help="number of workers for dataloader")
 
+parser.add_argument("--gen_captions_path", default=BASE_DIR+"/okvqa/data/captions.json",
+                    type=str, help="Path to file with generated captions.")
+
 args, unknown = parser.parse_known_args()
 
 if (os.path.exists(args.output_dir) and 
@@ -753,12 +758,12 @@ if args.query_encoder_type == 'lxmert':
     query_config_class = LxmertConfig
     query_tokenizer_class = LxmertTokenizer
     query_encoder_class = LxmertForRetriever
-elif args.query_encoder_type == 'bert':
+elif args.query_encoder_type == 'bert' or args.query_encoder_type == 'capt-bert':
     query_config_class = BertConfig
     query_tokenizer_class = BertTokenizer
     query_encoder_class = BertForRetriever
 else:
-    raise ValueError('`query_encoder_type` must be one of bert and lxmert.')
+    raise ValueError('Unsupported `query_encoder_type`')
     
 passage_config_class = BertConfig 
 passage_tokenizer_class = BertTokenizer 
@@ -826,7 +831,8 @@ if args.do_train:
                                      passage_tokenizer=passage_tokenizer,
                                      load_small=args.load_small,
                                      question_max_seq_length=args.question_max_seq_length,
-                                     passage_max_seq_length=args.passage_max_seq_length)
+                                     passage_max_seq_length=args.passage_max_seq_length,
+                                     gen_captions_path=args.gen_captions_path)
     global_step, tr_loss = train(args, train_dataset, model, query_tokenizer, passage_tokenizer)
     logger.info(" global_step = %s, average loss = %s",
                 global_step, tr_loss)

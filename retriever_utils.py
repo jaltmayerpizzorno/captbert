@@ -90,7 +90,8 @@ class RetrieverDataset(Dataset):
                  load_small=False, 
                  question_max_seq_length=20, 
                  passage_max_seq_length=384,
-                 query_only=False):
+                 query_only=False,
+                 gen_captions_path=None):
         
         self._filename = filename
         self._data_sub_type = data_sub_type
@@ -109,7 +110,13 @@ class RetrieverDataset(Dataset):
                 self._total_data = len(f.readlines())
                 
         self._image_features = datasets.Dataset.from_file(image_features_path)
-                
+
+        self._gen_captions = None
+        if gen_captions_path:
+            with open(gen_captions_path, "r") as f:
+                d = json.load(f)
+                self._gen_captions = {int(k): d[k] for k in d} # JSON keys are always strings... why complicate things
+
     def __len__(self):
         return self._total_data
                 
@@ -124,9 +131,15 @@ class RetrieverDataset(Dataset):
         neg_passage = entry['neg_passage']['passage']
         
         return_feature_dict = {'question_id': question_id}
+
+        max_length = self._question_max_seq_length
+        if self._gen_captions:
+            max_length += 20    # so we consider full input... max caption length seen is 19
                   
+        # text_pair: see https://huggingface.co/docs/transformers/main/en/main_classes/tokenizer#transformers.PreTrainedTokenizer.__call__
         question_features = self._query_tokenizer(
             question,
+            text_pair=self._gen_captions[image_id] if self._gen_captions else None,
             padding="max_length",
             max_length=self._question_max_seq_length,
             truncation=True,
