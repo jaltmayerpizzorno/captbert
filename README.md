@@ -60,8 +60,8 @@ generate captions using a GPU, and process a few images at a time.
 The original `demo.py` took about 4s per image, whereas my modified version takes about .2s.
 My version is called [gencaptions.py](gencaptions.py), which I ran using `sbatch` from [gencaptions-batch.sh](gencaptions-batch.sh).
 
-The generated captions are in [data/captions-train2014.json](data/captions-train2014.json) and [data/captions-val2014.json](data/captions-val2014.json).
-
+I later merged both training and validation image captions into a single file, [data/captions.json](data/captions.json),
+to simplify its use.
 
 ---
 ## The items below are still original notes from Qu et al.'s OK-VQA
