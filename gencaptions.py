@@ -112,6 +112,7 @@ if __name__ == "__main__":
 
         for i in range(len(input_images)):
             path = Path(input_files[i+start])
+            # FIXME should just use the numeric ID built into the filename instead
             results[path.name] = convert_vector_idx2word(pred[i][0], coco_tokens['idx2word_list'])[1:-1]
             print(path, results[path.name])
 
