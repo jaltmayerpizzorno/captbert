@@ -49,6 +49,20 @@ pip install pytrec_eval
 conda install scikit-image
 ```
 
+## Generating Captions
+
+I selected [ExpansionNet v2](https://github.com/jchenghu/expansionnet_v2) to generate captions,
+since at this time it is [one of the newest and best performing caption generators](https://paperswithcode.com/sota/image-captioning-on-coco-captions),
+provides code with the paper, and the code seemed relatively easy to reuse.
+
+I modified their [demo.py](https://github.com/jchenghu/ExpansionNet_v2/blob/master/demo.py) to
+generate captions using a GPU, and process a few images at a time.
+The original `demo.py` took about 4s per image, whereas my modified version takes about .2s.
+My version is called [gencaptions.py](gencaptions.py), which I ran using `sbatch` from [gencaptions-batch.sh](gencaptions-batch.sh).
+
+The generated captions are in [data/captions-train2014.json](data/captions-train2014.json) and [data/captions-val2014.json](data/captions-val2014.json).
+
+
 ---
 ## The items below are still original notes from Qu et al.'s OK-VQA
 
