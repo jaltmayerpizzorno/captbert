@@ -19,6 +19,7 @@ conda create --name okvqa2 python=3.8
 conda activate okvqa2
 conda install faiss-gpu cudatoolkit=10.2 -c pytorch
 conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch-lts
+pip install matplotlib
 
 # --- apex (distributed machine learning package)
 git clone https://github.com/NVIDIA/apex
@@ -60,8 +61,9 @@ generate captions using a GPU, and process a few images at a time.
 The original `demo.py` took about 4s per image, whereas my modified version takes about .2s.
 My version is called [gencaptions.py](gencaptions.py), which I ran using `sbatch` from [gencaptions-batch.sh](gencaptions-batch.sh).
 
-I later merged both training and validation image captions into a single file, [data/captions.json](data/captions.json),
-to simplify its use.
+I later merged both training and validation image captions into a single file and changed the dictionary key
+from file names to image IDs, to simplify its use.
+The result is in [data/captions.json](data/captions.json).
 
 ---
 ## The items below are still original notes from Qu et al.'s OK-VQA
