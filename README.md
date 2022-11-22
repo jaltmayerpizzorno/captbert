@@ -54,7 +54,8 @@ conda install scikit-image
 ```
 
 I also got it configured for a computer I have at home.
-The GPU only has 8GB, so I had to reduce the batch size to 2, but the GPU is actually a bit faster than those on Unity.
+The GPU only has 8GB, so I had to reduce the batch size to 3 (`--per_gpu_train_batch_size=3`), but the GPU (NVIDIA GeForce RTX 2080 SUPER)
+is actually a bit faster than those on Unity.
 These were the setup steps for my home computer:
 ```
 conda create --name okvqa3 python=3.9
