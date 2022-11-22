@@ -5,8 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-BASE_DIR = '/home/jpizzorno_umass_edu/work/cs646-project'
-
 # import os
 # os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 # os.environ["CUDA_VISIBLE_DEVICES"]="3"
@@ -53,6 +51,7 @@ logger = logging.getLogger(__name__)
 
 # In[3]:
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 def set_seed(args):
     random.seed(args.seed)
