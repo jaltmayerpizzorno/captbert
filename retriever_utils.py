@@ -139,7 +139,7 @@ class RetrieverDataset(Dataset):
         # text_pair: see https://huggingface.co/docs/transformers/main/en/main_classes/tokenizer#transformers.PreTrainedTokenizer.__call__
         question_features = self._query_tokenizer(
             question,
-            text_pair=self._gen_captions[image_id] if self._gen_captions else None,
+            text_pair=' '.join(self._gen_captions[image_id]) if self._gen_captions else None,
             padding="max_length",
             max_length=self._question_max_seq_length,
             truncation=True,
