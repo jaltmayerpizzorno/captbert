@@ -7,10 +7,13 @@ I am extending the work in [a paper by Qu, Zamani, Yang, Croft and Learned-Mille
 to perform dense passage retrieval for OK-VQA based on the question and on an automatically generated caption.
 
 ## Environment setup
-Qu et al.'s code is based on Python 3.8, so to minimize issues I thought I'd use that as well.
-However, current Python is now 3.11 and various packages have moved on, so it's not all a walk in the park.
+Qu et al.'s code is uses Apex' AMP (automatic mixed precision) support, which is
+[incompatible with pytorch 1.10 and later](https://github.com/NVIDIA/apex/issues/1215).
+Pytorch 1.9 or earlier isn't readily available for newer Python versions, and neither
+are the CUDA libraries, nvcc compiler needed to build Apex, etc., so I tried to keep
+things as close as their environment as possible.
 
-These steps are for setting it up on the Unity cluster.
+These were my steps for setting it up on the Unity cluster.
 ```
 module load cuda/10.2.89
 module load gcc/8.5.0
@@ -48,6 +51,48 @@ conda install -c conda-forge tensorboard
 pip install datasets
 pip install pytrec_eval
 conda install scikit-image
+```
+
+I also got it configured for a computer I have at home.
+The GPU only has 8GB, so I had to reduce the batch size to 2, but the GPU is actually a bit faster than those on Unity.
+These were the setup steps for my home computer:
+```
+conda create --name okvqa3 python=3.9
+conda activate okvqa3
+
+conda install cudatoolkit-dev=11.1 -c conda-forge
+conda install faiss-gpu cudatoolkit=11.1 -c pytorch -c conda-forge
+conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch-lts -c conda-forge
+pip install --upgrade pip
+pip install matplotlib packaging
+
+# avoid wrong CUDA being picked, if installed besides cudatoolkit-dev
+unset CUDA_HOME
+unset CUDA_PATH
+
+git clone https://github.com/NVIDIA/apex
+cd apex
+
+# There is something broken in the current HEAD ()
+# related to backwards compatibility with torch.distributed.all_gather_into_tensor
+git checkout ce9df7d
+
+# If the GPUs aren't visible where you're compiling, you'll need to set their architectures
+# by setting TORCH_CUDA_ARCH_LIST. See e.g. https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
+# to find out what architecture your GPUs have.  Or use something like "nvidia-smi -q -x | grep product_"
+#export TORCH_CUDA_ARCH_LIST="7.0 7.5"
+
+pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" .
+cd ..
+
+git clone https://github.com/huggingface/transformers.git
+cd transformers
+pip install .
+cd ..
+
+conda install -c conda-forge tensorboard
+conda install scikit-image
+pip install matplotlib datasets pytrec_eval
 ```
 
 ## Generating Captions
