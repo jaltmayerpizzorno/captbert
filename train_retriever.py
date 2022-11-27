@@ -377,6 +377,7 @@ def evaluate_pairs(args, model, query_tokenizer, passage_tokenizer, prefix=""):
                                load_small=args.load_small,
                                question_max_seq_length=args.question_max_seq_length,
                                passage_max_seq_length=args.passage_max_seq_length,
+                               gen_captions_path=args.gen_captions_path,
                                query_only=False)
 
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
@@ -495,7 +496,8 @@ def gen_query_rep(args, model, tokenizer, prefix=''):
                                data_sub_type=eval_data_sub_type,
                                query_tokenizer=tokenizer,
                                load_small=args.load_small,
-                               question_max_seq_length=args.question_max_seq_length, 
+                               question_max_seq_length=args.question_max_seq_length,
+                               gen_captions_path=args.gen_captions_path, 
                                query_only=True)
 
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
@@ -642,9 +644,9 @@ parser.add_argument("--do_eval_pairs", default=False, type=str2bool,
 parser.add_argument("--do_lower_case", default=True, type=str2bool,
                     help="Set this flag if you are using an uncased model.")
 
-parser.add_argument("--per_gpu_train_batch_size", default=4, type=int,
+parser.add_argument("--per_gpu_train_batch_size", default=3, type=int,
                     help="Batch size per GPU/CPU for training.")
-parser.add_argument("--per_gpu_eval_batch_size", default=50, type=int,
+parser.add_argument("--per_gpu_eval_batch_size", default=6, type=int,
                     help="Batch size per GPU/CPU for evaluation.")
 parser.add_argument("--learning_rate", default=5e-5, type=float,
                     help="The initial learning rate for Adam.")
