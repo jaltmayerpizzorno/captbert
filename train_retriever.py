@@ -548,7 +548,7 @@ parser.add_argument("--image_features_path", default=BASE_DIR+'/okvqa/data/okvqa
 parser.add_argument("--train_data_sub_type", default='train2014',
                    type=str, required=False,
                    help="Train data sub type.")
-parser.add_argument("--val_data_sub_type", default='test2014',
+parser.add_argument("--val_data_sub_type", default='val2014',
                    type=str, required=False,
                    help="Val data sub type.")
 parser.add_argument("--test_data_sub_type", default='',
@@ -699,7 +699,7 @@ parser.add_argument('--server_ip', type=str, default='',
 parser.add_argument('--server_port', type=str, default='',
                     help="Can be used for distant debugging.")
 
-parser.add_argument("--load_small", default=True, type=str2bool, required=False,
+parser.add_argument("--load_small", default=False, type=str2bool, required=False,
                     help="whether to load just a small portion of data during development")
 parser.add_argument("--num_workers", default=1, type=int, required=False,
                     help="number of workers for dataloader")
