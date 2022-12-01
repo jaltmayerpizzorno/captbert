@@ -248,6 +248,7 @@ def evaluate(args, model, query_tokenizer, passage_tokenizer, prefix=""):
         
         index = faiss.IndexFlatIP(args.proj_size)
         for collection_reps_file in collection_reps_files:
+            logger.info(f'Reading {collection_reps_file}')
             with open(collection_reps_file) as fin:
                 for line in tqdm(fin):
                     dic = json.loads(line.strip())
