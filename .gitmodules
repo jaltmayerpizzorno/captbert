@@ -1,0 +1,9 @@
+[submodule "ExpansionNet_v2"]
+	path = ExpansionNet_v2
+	url = git@github.com:jchenghu/ExpansionNet_v2.git
+[submodule "apx"]
+	path = apex
+	url = https://github.com/NVIDIA/apex
+[submodule "transformers"]
+	path = transformers
+	url = https://github.com/huggingface/transformers.git
