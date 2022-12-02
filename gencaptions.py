@@ -11,6 +11,7 @@ from argparse import Namespace
 from pathlib import Path
 import json
 import sys
+import re
 
 from PIL import Image as PIL_Image
 
@@ -83,6 +84,8 @@ if __name__ == "__main__":
     for path in [str(f) for p in args.image_paths for f in Path(p).iterdir()  if f.suffix == '.jpg']:
         input_files.append(path)
 
+#    input_files = input_files[:100]
+
     beam_search_kwargs = {'beam_size': args.beam_size,
                           'beam_max_seq_len': args.max_seq_len,
                           'sample_or_max': 'max',
@@ -111,14 +114,17 @@ if __name__ == "__main__":
                             mode='beam_search', **beam_search_kwargs)
 
         for i in range(len(input_images)):
-            path = Path(input_files[i+start])
-            # FIXME should just use the numeric ID built into the filename instead
-            results[path.name] = convert_vector_idx2word(pred[i][0], coco_tokens['idx2word_list'])[1:-1]
-            print(path, results[path.name])
+            name = Path(input_files[i+start]).name
+            if (m := re.search("^COCO_.*?_(\\d+)\.jpg", name)):
+                name = str(int(m.group(1)))
 
-        with open(args.captions_file, "w") as fout:
-            json.dump(results, fout)
+            results[name] = convert_vector_idx2word(pred[i][0], coco_tokens['idx2word_list'])[1:-1]
 
-        print(f"~{round(len(results)/len(input_files)*100)}% done")
+        print(f"{len(results)}/{len(input_files)}, ~{round(len(results)/len(input_files)*100)}% done", end="\r")
+
+    print("")
+
+    with open(args.captions_file, "w") as fout:
+        json.dump(results, fout)
 
 #    print("Closed.")
