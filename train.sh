@@ -8,15 +8,16 @@
 
 #python -u -m torch.distributed.launch --nproc_per_node 4 train_retriever.py \
 python train_retriever.py \
+    --output_dir=`pwd`/../okvqa_output-2\
     --gen_passage_rep=False \
     --val_data_sub_type=val2014 \
     --do_train=True \
     --do_eval=True \
     --do_eval_pairs=True \
-    --per_gpu_train_batch_size=4 \
-    --per_gpu_eval_batch_size=10 \
+    --per_gpu_train_batch_size=3 \
+    --per_gpu_eval_batch_size=6 \
     --learning_rate=1e-5 \
-    --num_train_epochs=2.0 \
+    --num_train_epochs=8.0 \
     --logging_steps=5 \
     --save_steps=5000 \
     --fp16=True \
