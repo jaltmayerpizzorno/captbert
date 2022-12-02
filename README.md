@@ -4,6 +4,30 @@ As my final project for [COMPSCI 646: Information Retrieval](https://groups.cs.u
 I extended the work in [a paper by Qu, Zamani, Yang, Croft and Learned-Miller](https://github.com/prdwb/okvqa-release) by fine-tuning BERT
 to perform dense passage retrieval for OK-VQA based on the question and on image captioning.
 
+## Guide to files
+- `gencaptions.py` and `gencaptions-batch.sh` generate the captions; see Captioning below;
+- `train.sh` contains the command used for training.  I initially had trouble training on multiple GPUs, and ended up training on a single one;
+- `eval.sh` was used to evaluate the checkpoints after training completed (and its automatic evaluation errored out);
+- after selecting the best checkpoint, `genreps.sh` was used to generate passage representations for the whole collection. The script requires too much memory to use all at once, but if you use `split` to create files with at most 500,000 lines, the script should require no more than 32GB of memory. This was done on 5 GPUs (I requested 8, but the cluster gave me 5);
+- `eval-test.sh` was used to evaluate that checkpoint using the test set, retrieving over the entire collection.
+
+The `logs` directory contains original logs from when (most of) these programs ran.
+
+## Captioning
+I selected [ExpansionNet v2](https://github.com/jchenghu/expansionnet_v2) to generate captions,
+since at this time it is [one of the newest and best performing caption generators](https://paperswithcode.com/sota/image-captioning-on-coco-captions),
+provides code with the paper, and the code seemed relatively easy to reuse.
+
+I modified their [demo.py](https://github.com/jchenghu/ExpansionNet_v2/blob/master/demo.py) to
+generate captions using a GPU, and process a few images at a time.
+The original `demo.py` took about 4s per image, whereas my modified version takes about .2s.
+My version is called [gencaptions.py](gencaptions.py), which I ran using `sbatch` from [gencaptions-batch.sh](gencaptions-batch.sh).
+
+I later merged both training and validation image captions into a single file and changed the dictionary key
+from file names to image IDs, to simplify its use.
+I modified the scripts to (hopefully) do the same if they were run.
+The result is in [data/captions.json](data/captions.json).
+
 ## Environment setup
 Qu et al.'s code is uses Apex' AMP (automatic mixed precision) support, which is
 [incompatible with pytorch 1.10 and later](https://github.com/NVIDIA/apex/issues/1215).
@@ -11,7 +35,7 @@ Pytorch 1.9 or earlier isn't readily available for newer Python versions, and ne
 are the CUDA libraries, nvcc compiler needed to build Apex, etc., so I tried to keep
 things as close as their environment as possible.
 
-These were my steps for setting it up on the Unity cluster.
+These were my steps for setting it up on the Unity cluster utilized at UMass Amherst.
 ```
 module load cuda/10.2.89
 module load gcc/8.5.0
@@ -93,22 +117,6 @@ conda install -c conda-forge tensorboard
 conda install scikit-image
 pip install matplotlib datasets pytrec_eval
 ```
-
-## Generating Captions
-
-I selected [ExpansionNet v2](https://github.com/jchenghu/expansionnet_v2) to generate captions,
-since at this time it is [one of the newest and best performing caption generators](https://paperswithcode.com/sota/image-captioning-on-coco-captions),
-provides code with the paper, and the code seemed relatively easy to reuse.
-
-I modified their [demo.py](https://github.com/jchenghu/ExpansionNet_v2/blob/master/demo.py) to
-generate captions using a GPU, and process a few images at a time.
-The original `demo.py` took about 4s per image, whereas my modified version takes about .2s.
-My version is called [gencaptions.py](gencaptions.py), which I ran using `sbatch` from [gencaptions-batch.sh](gencaptions-batch.sh).
-
-I later merged both training and validation image captions into a single file and changed the dictionary key
-from file names to image IDs, to simplify its use.
-I modified the scripts to (hopefully) do the same if they were run.
-The result is in [data/captions.json](data/captions.json).
 
 ## Acknowledgements
 * We thank the authors of:
