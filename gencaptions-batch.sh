@@ -11,4 +11,4 @@
 #cd ~/work/cs646-project/okvqa
 which python3
 
-python3 gencaptions.py --load_path data/expansionnet/rf_model.pth --image_paths data/train2014 --image_paths data/val2014 --captions_file data/captions.json
+python3 gencaptions.py --load_path data/expansionnet/rf_model.pth --image_paths data/train2014 data/val2014 --captions_file data/captions.json
