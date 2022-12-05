@@ -13,6 +13,8 @@ to perform dense passage retrieval for OK-VQA based on the question and on image
 
 The `logs` directory contains original logs from when (most of) these programs ran.
 
+- `eval2-capt-bert.sh` and `eval2-lxmert.sh` were used to re-run the evaluation after I added paired t-testing.
+
 ## Captioning
 I selected [ExpansionNet v2](https://github.com/jchenghu/expansionnet_v2) to generate captions,
 since at this time it is [one of the newest and best performing caption generators](https://paperswithcode.com/sota/image-captioning-on-coco-captions),
