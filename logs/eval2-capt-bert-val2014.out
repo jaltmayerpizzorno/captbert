@@ -1,0 +1,39 @@
+$ bash eval2-capt-bert.sh 
+12/05/2022 13:34:29 - WARNING - __main__ -   Process rank: -1, device: cuda, n_gpu: 1, distributed training: False, 16-bits training: True
+12/05/2022 13:34:37 - INFO - __main__ -   Training/evaluation parameters Namespace(input_file='/home/juan/cs646-project/capt-bert/data/data/{}_pairs_cap_combine_sum.txt', image_features_path='/home/juan/cs646-project/capt-bert/data/okvqa.datasets', train_data_sub_type='train2014', val_data_sub_type='val2014', test_data_sub_type='', ann_file='/home/juan/cs646-project/capt-bert/data/mscoco_val2014_annotations.json', ques_file='/home/juan/cs646-project/capt-bert/data/OpenEnded_mscoco_val2014_questions.json', passage_id_to_line_id_file='/home/juan/cs646-project/capt-bert/data/passage_id_to_line_id.json', all_blocks_file='/home/juan/cs646-project/capt-bert/data/all_blocks.txt', query_model_name_or_path='bert-base-uncased', passage_model_name_or_path='bert-base-uncased', output_dir='/home/juan/cs646-project/capt-bert/../eval-val-capt-bert', query_encoder_type='capt-bert', lxmert_rep_type={'pooled_output': 'none'}, neg_type='other_pos+all_neg', retrieve_top_k=5, gen_passage_rep=False, retrieve_checkpoint='/home/juan/cs646-project/capt-bert/data/checkpoint-captbert', gen_passage_rep_input='/home/juan/cs646-project/capt-bert/data/data/val2014_blocks_cap_combine_sum.txt', gen_passage_rep_output='', collection_reps_path='', cache_dir='/home/juan/cs646-project/capt-bert/../okvqa_huggingface_cache', question_max_seq_length=20, passage_max_seq_length=384, proj_size=768, do_train=False, do_eval=True, do_test=False, do_eval_pairs=False, do_lower_case=True, per_gpu_train_batch_size=3, per_gpu_eval_batch_size=6, learning_rate=5e-05, gradient_accumulation_steps=1, weight_decay=0.0, adam_epsilon=1e-08, max_grad_norm=1.0, num_train_epochs=1.0, max_steps=0, warmup_steps=0, warmup_portion=0.1, verbose_logging=False, logging_steps=2, save_steps=5, eval_all_checkpoints=True, no_cuda=False, overwrite_output_dir=True, overwrite_cache=False, seed=42, local_rank=-1, fp16=True, fp16_opt_level='O1', server_ip='', server_port='', load_small=False, num_workers=1, gen_captions_path='/home/juan/cs646-project/capt-bert/data/captions.json', baseline_path='/home/juan/cs646-project/capt-bert/data/checkpoint-lxmert', n_gpu=1, device=device(type='cuda'))
+loading VQA annotations and questions into memory...
+time elpased:  0:00:00.063493
+creating index...
+index created!
+12/05/2022 13:34:44 - INFO - __main__ -   Evaluate the following checkpoints: ['/home/juan/cs646-project/capt-bert/data/checkpoint-captbert']
+12/05/2022 13:34:44 - INFO - __main__ -   global_step: retrieve
+12/05/2022 13:34:44 - INFO - __main__ -   evaluating checkpoint: /home/juan/cs646-project/capt-bert/data/checkpoint-captbert
+12/05/2022 13:34:44 - INFO - retriever_utils -   Loading model from /home/juan/cs646-project/capt-bert/data/checkpoint-captbert
+12/05/2022 13:34:48 - INFO - __main__ -   Generating val collection reps.
+12/05/2022 13:34:48 - INFO - __main__ -   ***** Gen passage rep *****
+12/05/2022 13:34:48 - INFO - __main__ -     Num examples = 34059
+12/05/2022 13:34:48 - INFO - __main__ -     Batch size = 6
+Evaluating: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5677/5677 [06:01<00:00, 15.70it/s]
+12/05/2022 13:40:50 - INFO - __main__ -   len index: 34059
+12/05/2022 13:40:52 - INFO - __main__ -   ***** Gen query rep  *****
+12/05/2022 13:40:52 - INFO - __main__ -     Num examples = 2523
+12/05/2022 13:40:52 - INFO - __main__ -     Batch size = 6
+Evaluating: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 421/421 [02:43<00:00,  2.58it/s]
+12/05/2022 13:43:36 - INFO - __main__ -   query_reps.shape: 2523 768
+12/05/2022 13:43:36 - INFO - __main__ -   D.shape: 2523 5
+12/05/2022 13:43:36 - INFO - __main__ -   I.shape: 2523 5
+12/05/2022 13:43:36 - INFO - __main__ -   Generating dynamic qrels.
+12/05/2022 13:43:47 - INFO - __main__ -   Dynamic qrels generated.
+12/05/2022 13:43:47 - INFO - __main__ -   len(qrels): 2523
+12/05/2022 13:43:47 - INFO - __main__ -   num_passages_in_qrels: 7620
+12/05/2022 13:43:47 - INFO - __main__ -   num_pos_passages: 5097
+12/05/2022 13:43:47 - INFO - __main__ -   num_placeholder_passages: 2523
+12/05/2022 13:43:47 - INFO - __main__ -   num_questions_with_pos_passages: 1828
+12/05/2022 13:43:47 - INFO - __main__ -   loading baseline metrics from /home/juan/cs646-project/capt-bert/data/checkpoint-lxmert/metrics_val2014.json
+12/05/2022 13:43:47 - INFO - __main__ -   MRR: 0.5482230149293169
+12/05/2022 13:43:47 - INFO - __main__ -   MRR_ttest: Ttest_relResult(statistic=8.020864913257105, pvalue=1.5916316589400935e-15)
+12/05/2022 13:43:47 - INFO - __main__ -   Precision: 0.4040428061831154
+12/05/2022 13:43:47 - INFO - __main__ -   Precision_ttest: Ttest_relResult(statistic=10.025253782151974, pvalue=3.192905040102036e-23)
+12/05/2022 13:43:47 - INFO - __main__ -   Results: {'MRR_retrieve': 0.5482230149293169, 'Precision_retrieve': 0.4040428061831154, 'MRR_ttest_retrieve': 'Ttest_relResult(statistic=8.020864913257105, pvalue=1.5916316589400935e-15)', 'Precision_ttest_retrieve': 'Ttest_relResult(statistic=10.025253782151974, pvalue=3.192905040102036e-23)'}
+12/05/2022 13:43:47 - INFO - __main__ -   best metrics: {'MRR': 0.5482230149293169, 'Precision': 0.4040428061831154, 'global_step': 'retrieve'}
+
