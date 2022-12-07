@@ -4,18 +4,20 @@
 #SBATCH -p gpu-long     # Partition
 #SBATCH -G 1            # Number of GPUs
 #SBATCH -t 50:00:00     # Job time limit
-#SBATCH -o eval2-capt-bert-%j.out # %j = job ID
+#SBATCH -o eval2-captbert-%j.out # %j = job ID
 
 #T=val2014
 T=test2014
+REPS=`pwd`/../okvqa-reps-captbert/
 
 python -u train_retriever.py \
-    --output_dir=`pwd`/../eval-capt-bert-$T\
+    --output_dir=`pwd`/../eval-captbert-$T\
     --gen_passage_rep=False \
     --do_train=False\
     --do_eval=True \
     --do_eval_pairs=False \
     --val_data_sub_type=$T \
+    --collection_reps_path=$REPS \
     --retrieve_checkpoint=`pwd`/data/checkpoint-captbert \
     --baseline_path=`pwd`/data/checkpoint-lxmert \
     --per_gpu_eval_batch_size=6 \
