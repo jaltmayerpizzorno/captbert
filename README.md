@@ -1,4 +1,4 @@
-# Capt-BERT: Passage Retrieval With Image Captioning for Outside-Knowledge Visual Question Answering
+# CaptBERT: Passage Retrieval With Image Captioning for Outside-Knowledge Visual Question Answering
 
 As my final project for [COMPSCI 646: Information Retrieval](https://groups.cs.umass.edu/zamani/compsci-646-information-retrieval-fall-2022/)
 I extended the work in [a paper by Qu, Zamani, Yang, Croft and Learned-Miller](https://github.com/prdwb/okvqa-release) by fine-tuning BERT

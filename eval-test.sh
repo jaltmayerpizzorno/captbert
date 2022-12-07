@@ -23,7 +23,7 @@ python -u train_retriever.py \
     --fp16=True \
     --load_small=False \
     --num_workers=8 \
-    --query_encoder_type=capt-bert \
+    --query_encoder_type=captbert \
     --query_model_name_or_path="bert-base-uncased" \
     --proj_size=768 \
     --neg_type=other_pos+all_neg

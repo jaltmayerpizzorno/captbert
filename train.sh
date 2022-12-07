@@ -8,7 +8,7 @@
 
 #python -u -m torch.distributed.launch --nproc_per_node 4 train_retriever.py \
 python train_retriever.py \
-    --output_dir=`pwd`/../okvqa_output-2\
+    --output_dir=`pwd`/../train-captbert\
     --gen_passage_rep=False \
     --val_data_sub_type=val2014 \
     --do_train=True \
@@ -23,7 +23,7 @@ python train_retriever.py \
     --fp16=True \
     --load_small=False \
     --num_workers=1 \
-    --query_encoder_type=capt-bert\
+    --query_encoder_type=captbert\
     --query_model_name_or_path="bert-base-uncased" \
     --proj_size=768 \
     --neg_type=other_pos+all_neg

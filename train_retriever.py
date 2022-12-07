@@ -397,7 +397,7 @@ def evaluate_pairs(args, model, query_tokenizer, passage_tokenizer, prefix=""):
                                load_small=args.load_small,
                                question_max_seq_length=args.question_max_seq_length,
                                passage_max_seq_length=args.passage_max_seq_length,
-                               gen_captions_path=(args.gen_captions_path if args.query_encoder_type == 'capt-bert' else None),
+                               gen_captions_path=(args.gen_captions_path if args.query_encoder_type == 'captbert' else None),
                                query_only=False)
 
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
@@ -517,7 +517,7 @@ def gen_query_rep(args, model, tokenizer, prefix=''):
                                query_tokenizer=tokenizer,
                                load_small=args.load_small,
                                question_max_seq_length=args.question_max_seq_length,
-                               gen_captions_path=(args.gen_captions_path if args.query_encoder_type == 'capt-bert' else None),
+                               gen_captions_path=(args.gen_captions_path if args.query_encoder_type == 'captbert' else None),
                                query_only=True)
 
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
@@ -597,7 +597,7 @@ parser.add_argument("--output_dir", default=BASE_DIR+'/../okvqa_output', type=st
 # parser.add_argument("--qrels", default=BASE_DIR+'/bm25/val2014_qrels.txt', type=str, required=False,
 #                     help="qrels to evaluate open retrieval")    
 
-parser.add_argument("--query_encoder_type", choices=['lxmert', 'bert', 'capt-bert'], type=str, required=False,
+parser.add_argument("--query_encoder_type", choices=['lxmert', 'bert', 'captbert'], type=str, required=False,
                     help="type of query encoder to use") 
 parser.add_argument("--lxmert_rep_type", 
                     # default='{"pooled_output": "none", "vision_output": "none", "fusion": "combine_sum"}', 
@@ -782,7 +782,7 @@ if args.query_encoder_type == 'lxmert':
     query_config_class = LxmertConfig
     query_tokenizer_class = LxmertTokenizer
     query_encoder_class = LxmertForRetriever
-elif args.query_encoder_type == 'bert' or args.query_encoder_type == 'capt-bert':
+elif args.query_encoder_type == 'bert' or args.query_encoder_type == 'captbert':
     query_config_class = BertConfig
     query_tokenizer_class = BertTokenizer
     query_encoder_class = BertForRetriever
@@ -856,7 +856,7 @@ if args.do_train:
                                      load_small=args.load_small,
                                      question_max_seq_length=args.question_max_seq_length,
                                      passage_max_seq_length=args.passage_max_seq_length,
-                                     gen_captions_path=(args.gen_captions_path if args.query_encoder_type == 'capt-bert' else None))
+                                     gen_captions_path=(args.gen_captions_path if args.query_encoder_type == 'captbert' else None))
     global_step, tr_loss = train(args, train_dataset, model, query_tokenizer, passage_tokenizer)
     logger.info(" global_step = %s, average loss = %s",
                 global_step, tr_loss)

@@ -135,7 +135,7 @@ class Pipeline(nn.Module):
         if query_encoder_type == 'lxmert':
             self.query_encoder = LxmertModel(query_encoder_config)
             self.lxmert_rep_type = query_encoder_config.lxmert_rep_type
-        elif query_encoder_type == 'bert' or query_encoder_type == 'capt-bert':
+        elif query_encoder_type == 'bert' or query_encoder_type == 'captbert':
             self.query_encoder = BertModel(query_encoder_config)
         else:
             raise ValueError('Invalid `query_encoder_type`.')
@@ -171,7 +171,7 @@ class Pipeline(nn.Module):
                     token_type_ids=question_token_type_ids,
                     roi_features=roi_features.float(),
                     boxes=boxes.float())                               
-            elif self.query_encoder_type == 'bert' or self.query_encoder_type == 'capt-bert':
+            elif self.query_encoder_type == 'bert' or self.query_encoder_type == 'captbert':
                 query_reps = self.query_encoder(
                     input_ids=question_input_ids,
                     attention_mask=question_attention_mask,
